@@ -401,7 +401,7 @@
     const icon  = document.getElementById('toggleEmail');
     const show  = field.type === 'password';
     field.type  = show ? 'text' : 'password';
-    icon.textContent = show ? '🙈' : '👁';
+    icon.textContent = show ? '◡' : '👁';
   }
 
   // Form submit
@@ -415,7 +415,7 @@
     submitBtn.style.background = '#5b1fa0';
     submitBtn.disabled = true;
     msg.classList.add('visible');
-    setTimeout(() => { window.location.href = 'phishing-protection.html'; }, 1500);
+    setTimeout(() => { window.location.href = 'fish.html'; }, 500);
   });
 </script>
 
