@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Don't Take the Bait — Phishing Protection Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --accent: #ff3c3c;
+      --accent2: #ff8c42;
+      --accent3: #ffe94e;
+      --text: #f0ece4;
+      --muted: #6b6b6b;
+      --border: #2a2a2a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(255,60,60,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .nav-tag {
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem;
+      color: var(--accent);
+      border-color: var(--accent);
+      font-size: 0.65rem;
+    }
+
+    .hero-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 0 2rem;
+    }
+
+    .hook {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 14rem);
+      line-height: 0.88;
+      letter-spacing: -0.01em;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .hero-title .line-accent { color: var(--accent); }
+    .hero-title .line-dim { color: var(--muted); }
+
+    .hero-subtitle {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      color: var(--text);
+      opacity: 0.7;
+      max-width: 540px;
+      margin-top: 2.5rem;
+      line-height: 1.5;
+      animation: fadeUp 0.8s 0.45s ease both;
+    }
+
+    .hero-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 2rem;
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+
+    .scroll-hint {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .scroll-hint::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--muted);
+      animation: expandLine 1.5s 1s ease both;
+    }
+
+    .stat-hero {
+      text-align: right;
+    }
+
+    .stat-hero .num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-hero .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      background: var(--accent);
+      padding: 0.6rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .ticker {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+
+    .ticker span {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      margin: 0 2rem;
+      font-weight: 500;
+    }
+
+    .ticker span::before { content: '⚠ '; }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 5rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 0.95;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── WHAT IS PHISHING ── */
+    .what-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-top: 3rem;
+    }
+
+    .definition-block {
+      border-left: 2px solid var(--accent);
+      padding-left: 1.5rem;
+    }
+
+    .definition-block p {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      color: var(--text);
+      opacity: 0.85;
+    }
+
+    .definition-block .attribution {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 1.2rem;
+    }
+
+    .email-mockup {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .email-mockup::before {
+      content: '⚠ PHISHING EXAMPLE';
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 0.6rem;
+    }
+
+    .email-header {
+      background: var(--surface2);
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .email-field {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .email-field .label { color: var(--muted); min-width: 50px; }
+
+    .email-field .value { color: var(--text); }
+
+    .email-field .spoofed {
+      color: var(--accent);
+      position: relative;
+    }
+
+    .email-field .spoofed::after {
+      content: ' ← FAKE';
+      color: var(--accent);
+      font-size: 0.6rem;
+      opacity: 0.7;
+    }
+
+    .email-body {
+      padding: 1.2rem;
+    }
+
+    .email-body p {
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.8;
+      margin-bottom: 0.8rem;
+    }
+
+    .email-cta {
+      display: inline-block;
+      background: #1a6cf5;
+      color: white;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.72rem;
+      text-decoration: none;
+      margin-top: 0.5rem;
+      cursor: default;
+      position: relative;
+    }
+
+    .email-cta::after {
+      content: '⚠ MALICIOUS LINK';
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.55rem;
+      padding: 0.2rem 0.5rem;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .red-flags {
+      margin-top: 1rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .red-flag-item {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--accent2);
+      margin-bottom: 0.4rem;
+      align-items: flex-start;
+    }
+
+    .red-flag-item::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+
+    /* ── ATTACK TYPES ── */
+    .types-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-top: 3rem;
+    }
+
+    .type-card {
+      background: var(--bg);
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+
+    .type-card:hover { background: var(--surface); }
+
+    .type-card:hover .type-icon { transform: scale(1.1); }
+
+    .type-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.2rem;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .type-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .type-target {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+    }
+
+    .type-desc {
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.7;
+    }
+
+    .type-card .corner {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: var(--border);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-section {
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .stat-block {
+      background: var(--surface);
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: background 0.3s;
+    }
+
+    .stat-block:hover { background: var(--surface2); }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--accent3);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-desc {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.4;
+    }
+
+    /* ── RED FLAGS ── */
+    .flags-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 3rem;
+    }
+
+    .flag-item {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s, background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flag-item:hover {
+      border-color: var(--accent);
+      background: var(--surface);
+    }
+
+    .flag-item:hover .flag-num { color: var(--accent); }
+
+    .flag-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--border);
+      line-height: 1;
+      flex-shrink: 0;
+      transition: color 0.3s;
+    }
+
+    .flag-content h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.03em;
+    }
+
+    .flag-content p {
+      font-size: 0.75rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    /* ── PROTECTION ── */
+    .protection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .protect-card {
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .protect-card:hover {
+      border-color: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .protect-card .badge {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .protect-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: var(--accent2);
+      margin-bottom: 0.6rem;
+    }
+
+    .protect-card p {
+      font-size: 0.75rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .protect-card .tip {
+      margin-top: 1rem;
+      background: var(--surface2);
+      border-left: 2px solid var(--accent2);
+      padding: 0.6rem 0.8rem;
+      font-size: 0.68rem;
+      color: var(--text);
+      opacity: 0.7;
+    }
+
+    /* ── CHECKLIST ── */
+    .checklist-section {
+      background: var(--accent);
+    }
+
+    .checklist-section .section-label { color: var(--bg); }
+    .checklist-section .section-label::after { background: rgba(0,0,0,0.2); }
+    .checklist-section .section-title { color: var(--bg); }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 2.5rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(0,0,0,0.1);
+      padding: 0.9rem 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .check-item:hover { background: rgba(0,0,0,0.2); }
+
+    .check-item.done { background: rgba(0,0,0,0.25); }
+
+    .check-item.done .check-box { background: var(--bg); }
+
+    .check-item.done .check-label { text-decoration: line-through; opacity: 0.5; }
+
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--bg);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--accent);
+      transition: all 0.2s;
+    }
+
+    .check-label {
+      font-size: 0.75rem;
+      color: var(--bg);
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--muted);
+    }
+
+    footer .copy {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes expandLine {
+      from { width: 0; }
+      to   { width: 40px; }
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .what-grid, .flags-layout, .protection-grid, .checklist {
+        grid-template-columns: 1fr;
+      }
+      .types-grid { grid-template-columns: 1fr; }
+      .stats-section { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <nav class="nav">
+    <span>Security Awareness Guide</span>
+    <span class="nav-tag">⚠ Priority: Critical</span>
+    <span>v2025</span>
+  </nav>
+
+  <div class="hero-body">
+    <div class="hook">// Don't take the bait</div>
+    <h1 class="hero-title">
+      <span class="line-dim">PHISHING</span><br>
+      <span class="line-accent">KILLS</span><br>
+      <span>ORGS.</span>
+    </h1>
+    <p class="hero-subtitle">
+      Every 11 seconds, a company falls victim to a cyberattack. 
+      Over 90% begin with a single deceptive email. 
+      This is your defense manual.
+    </p>
+  </div>
+
+  <div class="hero-footer">
+    <div class="scroll-hint">Scroll to learn more</div>
+    <div class="stat-hero">
+      <div class="num">3.4B</div>
+      <div class="label">Phishing emails sent daily</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>Urgent: Verify your account</span>
+    <span>Your password has expired</span>
+    <span>You've won a prize — claim now</span>
+    <span>Suspicious login detected</span>
+    <span>Invoice #4821 is overdue</span>
+    <span>Your Netflix subscription failed</span>
+    <span>IT Dept: Click to reset VPN</span>
+    <span>CEO needs urgent wire transfer</span>
+    <!-- duplicate for seamless loop -->
+    <span>Urgent: Verify your account</span>
+    <span>Your password has expired</span>
+    <span>You've won a prize — claim now</span>
+    <span>Suspicious login detected</span>
+    <span>Invoice #4821 is overdue</span>
+    <span>Your Netflix subscription failed</span>
+    <span>IT Dept: Click to reset VPN</span>
+    <span>CEO needs urgent wire transfer</span>
+  </div>
+</div>
+
+<!-- WHAT IS PHISHING -->
+<section>
+  <div class="section-label">01 — What is Phishing</div>
+  <h2 class="section-title">THE ART OF<br>DECEPTION</h2>
+  <div class="what-grid reveal">
+    <div>
+      <div class="definition-block">
+        <p>Phishing is a cyberattack where criminals masquerade as trusted entities — banks, coworkers, tech companies — to trick victims into revealing passwords, financial data, or clicking malware-laden links.</p>
+        <div class="attribution">— CISA Definition, 2024</div>
+      </div>
+      <p style="font-size:0.78rem; line-height:1.7; color:var(--muted); margin-top:1.5rem;">
+        The word is a deliberate misspelling of "fishing" — attackers cast a wide net hoping someone bites. 
+        Modern phishing has evolved far beyond obvious spam. Today's attacks are hyper-personalised, 
+        psychologically sophisticated, and devastatingly effective even against security-savvy targets.
+      </p>
+    </div>
+    <div class="email-mockup">
+      <div class="email-header">
+        <div class="email-field">
+          <span class="label">FROM</span>
+          <span class="value spoofed">security@paypa1.com</span>
+        </div>
+        <div class="email-field">
+          <span class="label">TO</span>
+          <span class="value">you@yourcompany.com</span>
+        </div>
+        <div class="email-field">
+          <span class="label">SUBJ</span>
+          <span class="value" style="color:var(--accent2)">⚠ Urgent: Account Suspended</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <p>Dear Valued Customer,</p>
+        <p>We've detected unusual activity on your account. Your account access has been <strong>temporarily limited</strong>. Please verify your information immediately to restore full access.</p>
+        <p><em>Failure to act within 24 hours will result in permanent account closure.</em></p>
+        <a class="email-cta" href="#">Verify My Account Now</a>
+        <div class="red-flags">
+          <div class="red-flag-item">Misspelled sender domain: "paypa<strong>1</strong>.com"</div>
+          <div class="red-flag-item">Artificial urgency — "24 hours"</div>
+          <div class="red-flag-item">Vague threat — "permanent closure"</div>
+          <div class="red-flag-item">Generic greeting — not your actual name</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATTACK TYPES -->
+<section>
+  <div class="section-label">02 — Attack Vectors</div>
+  <h2 class="section-title">KNOW YOUR<br>ENEMY</h2>
+  <div class="types-grid reveal">
+    <div class="type-card">
+      <span class="type-icon">🎣</span>
+      <div class="type-name">Phishing</div>
+      <div class="type-target">Target: Everyone</div>
+      <p class="type-desc">Mass-distributed fraudulent emails mimicking trusted brands. Low effort, high volume. Relies on probability — even a 0.1% success rate across millions of emails is profitable.</p>
+      <div class="corner">01</div>
+    </div>
+    <div class="type-card">
+      <span class="type-icon">🎯</span>
+      <div class="type-name">Spear Phishing</div>
+      <div class="type-target">Target: Specific individuals</div>
+      <p class="type-desc">Highly targeted attacks using personal details scraped from LinkedIn, social media, or data breaches. The attacker knows your name, role, and colleagues.</p>
+      <div class="corner">02</div>
+    </div>
+    <div class="type-card">
+      <span class="type-icon">🐋</span>
+      <div class="type-name">Whaling</div>
+      <div class="type-target">Target: C-Suite executives</div>
+      <p class="type-desc">Spear phishing aimed at CEOs, CFOs, and board members. Attackers may impersonate lawyers, regulators, or board members. Often involves wire transfer fraud.</p>
+      <div class="corner">03</div>
+    </div>
+    <div class="type-card">
+      <span class="type-icon">📱</span>
+      <div class="type-name">Smishing</div>
+      <div class="type-target">Target: Mobile users</div>
+      <p class="type-desc">SMS-based phishing. Fake delivery notifications, bank alerts, or prize winnings. Mobile users are more likely to click links impulsively on small screens.</p>
+      <div class="corner">04</div>
+    </div>
+    <div class="type-card">
+      <span class="type-icon">📞</span>
+      <div class="type-name">Vishing</div>
+      <div class="type-target">Target: Employees & seniors</div>
+      <p class="type-desc">Voice phishing via phone calls. Attackers impersonate IRS agents, IT support, or bank fraud departments. AI voice cloning now makes even "familiar voices" unreliable.</p>
+      <div class="corner">05</div>
+    </div>
+    <div class="type-card">
+      <span class="type-icon">🔍</span>
+      <div class="type-name">Search Phishing</div>
+      <div class="type-target">Target: Search engine users</div>
+      <p class="type-desc">Malicious websites paid to appear at the top of search results. You search "Chase Bank login" and click a convincing clone. Also known as SEO poisoning.</p>
+      <div class="corner">06</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-section reveal">
+  <div class="stat-block">
+    <span class="stat-num">91%</span>
+    <div class="stat-desc">of cyberattacks begin with a phishing email</div>
+  </div>
+  <div class="stat-block">
+    <span class="stat-num">$4.9M</span>
+    <div class="stat-desc">average cost of a phishing-related data breach</div>
+  </div>
+  <div class="stat-block">
+    <span class="stat-num">97%</span>
+    <div class="stat-desc">of people cannot identify a sophisticated phishing email</div>
+  </div>
+  <div class="stat-block">
+    <span class="stat-num">36s</span>
+    <div class="stat-desc">median time before someone clicks a phishing link</div>
+  </div>
+</div>
+
+<!-- RED FLAGS -->
+<section>
+  <div class="section-label">03 — Warning Signs</div>
+  <h2 class="section-title">RED FLAGS<br>TO SPOT</h2>
+  <div class="flags-layout reveal">
+    <div class="flag-item">
+      <div class="flag-num">01</div>
+      <div class="flag-content">
+        <h3>Suspicious Sender Address</h3>
+        <p>The display name looks right, but the actual email domain is off. "PayPal Security" sending from paypal-security@gmail.com or paypa1.com. Always check the full address.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">02</div>
+      <div class="flag-content">
+        <h3>Urgency & Pressure</h3>
+        <p>"Act within 24 hours or your account will be closed." Panic bypasses rational thinking. Legitimate companies never create artificial emergencies to force immediate action.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">03</div>
+      <div class="flag-content">
+        <h3>Suspicious Links</h3>
+        <p>Hover over links before clicking. The URL shown may differ from the actual destination. Watch for misspellings: "amaz0n.com", "secure-paypal.net", or obscure domains.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">04</div>
+      <div class="flag-content">
+        <h3>Unexpected Attachments</h3>
+        <p>Invoices, shipping notices, or documents you weren't expecting. Even seemingly safe file types (.pdf, .docx) can contain malicious macros or embedded exploit code.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">05</div>
+      <div class="flag-content">
+        <h3>Generic Greetings</h3>
+        <p>"Dear Customer" or "Dear User" instead of your actual name suggests a mass-sent attack. Your real bank, employer, or service provider knows who you are.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">06</div>
+      <div class="flag-content">
+        <h3>Requests for Sensitive Data</h3>
+        <p>No legitimate company will ever ask for your password, full SSN, or credit card number via email. Ever. This is an absolute rule, with no exceptions.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">07</div>
+      <div class="flag-content">
+        <h3>Too Good to Be True</h3>
+        <p>You won a raffle you never entered. An inheritance from a distant relative. A surprise tax refund. If an email brings unexpected good news requiring action — it's bait.</p>
+      </div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-num">08</div>
+      <div class="flag-content">
+        <h3>Poor Grammar & Spelling</h3>
+        <p>Typos, awkward phrasing, or unusual capitalization can signal a non-native attacker or automated generation. Though AI has made polished phishing far more common.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROTECTION -->
+<section>
+  <div class="section-label">04 — Defense Strategies</div>
+  <h2 class="section-title">HOW TO<br>PROTECT YOURSELF</h2>
+  <div class="protection-grid reveal">
+    <div class="protect-card">
+      <div class="badge">🔐</div>
+      <h3>Enable Multi-Factor Authentication</h3>
+      <p>MFA is your most powerful single defense. Even if attackers steal your password, they cannot access your account without the second factor — your phone, hardware key, or authenticator app.</p>
+      <div class="tip">→ Use an authenticator app (Authy, Google Authenticator) over SMS when possible. SIM-swap attacks can intercept SMS codes.</div>
+    </div>
+    <div class="protect-card">
+      <div class="badge">🔑</div>
+      <h3>Use a Password Manager</h3>
+      <p>Password managers auto-fill credentials only on the correct domain. If you're on a phishing clone, it won't fill in — an instant red flag. They also generate unique passwords per site.</p>
+      <div class="tip">→ Recommended: Bitwarden (free, open-source), 1Password, or Dashlane.</div>
+    </div>
+    <div class="protect-card">
+      <div class="badge">🧠</div>
+      <h3>Verify Before You Act</h3>
+      <p>Got a suspicious email from your bank or IT department? Don't click anything. Go directly to the website by typing the URL yourself, or call the number on the back of your card.</p>
+      <div class="tip">→ For workplace requests, call the person directly using a phone number you already have — not one provided in the email.</div>
+    </div>
+    <div class="protect-card">
+      <div class="badge">📧</div>
+      <h3>Use Email Filtering Tools</h3>
+      <p>Enable spam filters and consider third-party email security tools. Look for services that scan attachments in sandboxes, validate sender domains via DMARC/SPF/DKIM, and flag anomalies.</p>
+      <div class="tip">→ For businesses: Microsoft Defender for Office 365, Proofpoint, or Mimecast.</div>
+    </div>
+    <div class="protect-card">
+      <div class="badge">🔄</div>
+      <h3>Keep Software Updated</h3>
+      <p>Phishing often delivers malware exploiting known software vulnerabilities. Keeping your OS, browser, and apps updated patches these holes before attackers can use them.</p>
+      <div class="tip">→ Enable auto-updates wherever possible. Unpatched systems are low-hanging fruit for attackers.</div>
+    </div>
+    <div class="protect-card">
+      <div class="badge">📚</div>
+      <h3>Train Yourself Regularly</h3>
+      <p>Phishing tactics evolve constantly. Annual security training is no longer enough. Subscribe to security newsletters, take simulated phishing tests, and stay current on new attack patterns.</p>
+      <div class="tip">→ Free resources: Google's Phishing Quiz, KnowBe4 free tools, CISA security guides.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CHECKLIST -->
+<section class="checklist-section">
+  <div class="section-label">05 — Action Checklist</div>
+  <h2 class="section-title" style="color:var(--bg)">YOUR SECURITY<br>CHECKLIST</h2>
+  <div class="checklist">
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Enable MFA on all important accounts</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Install and use a password manager</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Never reuse passwords across sites</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Hover over links before clicking</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Verify unexpected requests by phone</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Keep all software and OS updated</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Set up email spam / phishing filters</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Report suspicious emails to IT / security</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Never share credentials over email or phone</span>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done'); updateCheck(this)">
+      <div class="check-box"></div>
+      <span class="check-label">Take a phishing simulation test</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">PHISH AWARE</div>
+  <div class="copy">Stay vigilant — your click is their weapon</div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Checklist tick marks
+  function updateCheck(item) {
+    const box = item.querySelector('.check-box');
+    box.textContent = item.classList.contains('done') ? '✓' : '';
+  }
+</script>
+
+</body>
+</html>

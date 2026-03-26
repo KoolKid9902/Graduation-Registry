@@ -67,13 +67,15 @@
   const messageDiv = document.getElementById('message');
 
   form.addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent actual form submission
+    e.preventDefault(); // Prevent default form submission
 
-    // Just show the confirmation message
-    messageDiv.textContent = "Info submitted!";
+    // Show confirmation message
+    messageDiv.textContent = "Info submitted! Redirecting...";
 
-    // Optionally, clear the form
-    form.reset();
+    // Redirect to fish page after 1.5 seconds
+    setTimeout(() => {
+      window.location.href = "fish.html";
+    }, 1500);
   });
 </script>
 
