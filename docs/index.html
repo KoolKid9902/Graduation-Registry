@@ -29,8 +29,9 @@
       color: var(--text);
       font-family: 'DM Mono', monospace;
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
     }
 
@@ -187,8 +188,12 @@
       justify-content: center;
       padding: 3rem 3.5rem;
       background: #ffffff;
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 8px 40px rgba(123,53,193,0.08);
       animation: fadeUp 0.9s 0.3s ease both;
-      position: relative; overflow: hidden;
+      position: relative;
     }
     .right-panel::before {
       content: '';
@@ -213,7 +218,8 @@
 
     .form-title {
       font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 600;
-      color: var(--white); margin-bottom: 0.4rem; letter-spacing: 0.03em;
+      color: var(--white); margin-bottom: 1.2rem; letter-spacing: 0.03em;
+      text-align: center;
     }
     .form-subtitle {
       font-family: 'Cormorant Garamond', serif;
@@ -342,56 +348,18 @@
 </head>
 <body>
 
-<canvas id="confetti-canvas"></canvas>
-
-<!-- ══ LEFT PANEL ══ -->
-<div class="left-panel">
-  <div class="diagonal-lines"></div>
-
-  <div class="bg-cap">
-    <svg width="480" height="480" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="50,10 95,35 50,55 5,35" fill="white"/>
-      <polygon points="50,55 80,41 80,65 50,75 20,65 20,41" fill="white"/>
-      <line x1="80" y1="35" x2="92" y2="38" stroke="white" stroke-width="2"/>
-      <circle cx="92" cy="42" r="4" fill="white"/>
-    </svg>
-  </div>
-
-  <div class="crest">
-    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="40" cy="40" r="38" stroke="#7b35c1" stroke-width="1.5"/>
-      <circle cx="40" cy="40" r="32" stroke="#7b35c1" stroke-width="0.5" stroke-dasharray="3 3"/>
-      <polygon points="40,20 62,31 40,40 18,31" fill="#a259e6"/>
-      <polygon points="40,40 56,33 56,48 40,54 24,48 24,33" fill="#7b35c1"/>
-      <line x1="56" y1="31" x2="64" y2="33" stroke="#d4af6a" stroke-width="1.5"/>
-      <circle cx="64" cy="36" r="2.5" fill="#d4af6a"/>
-      <path id="textCircle" d="M 40,40 m -28,0 a 28,28 0 1,1 56,0 a 28,28 0 1,1 -56,0" fill="none"/>
-      <text font-family="Cinzel, serif" font-size="5.5" fill="#d4af6a" letter-spacing="2">
-        <textPath href="#textCircle" startOffset="8%">PHISHAWARE · GRADUATE PORTAL ·</textPath>
-      </text>
-    </svg>
-  </div>
-
-  <div class="panel-middle">
-    <div class="panel-year">Class of 2025 — Security Excellence</div>
-    <h1 class="panel-title">
-      YOU HAVE<br>
-      <span class="purple">BEEN</span><br>
-      PHISHED!
-    </h1>
-
-  </div>
-
-  <div class="panel-bottom">© 2025 PhishAware — Security Awareness Programme</div>
-</div>
 
 <!-- ══ RIGHT PANEL ══ -->
 <div class="right-panel">
   <div class="form-header">
-    <div class="form-seal">
-      <div class="seal-line"></div>
-      <div class="seal-badge">🎓 Secure Enrollment</div>
-      <div class="seal-line rev"></div>
+    <div style="text-align:center; margin-bottom: 1.2rem;">
+      <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,18 92,40 50,58 8,40" fill="#7b35c1"/>
+        <polygon points="50,58 78,46 78,68 50,78 22,68 22,46" fill="#a259e6"/>
+        <line x1="78" y1="40" x2="90" y2="43" stroke="#b8923a" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="90" cy="50" r="5" fill="#b8923a"/>
+        <line x1="90" y1="43" x2="90" y2="50" stroke="#b8923a" stroke-width="3" stroke-linecap="round"/>
+      </svg>
     </div>
     <h2 class="form-title">Register</h2>
   </div>
@@ -422,50 +390,6 @@
 <script>
 
 
-  // Confetti
-  const canvas = document.getElementById('confetti-canvas');
-  const ctx = canvas.getContext('2d');
-  let particles = [], animFrame;
-
-  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  const colors = ['#7b35c1','#a259e6','#d4af6a','#f5f3ef','#c8c4cc','#ffffff','#5b1fa0','#e0d0f5'];
-
-  function spawnConfetti() {
-    for (let i = 0; i < 160; i++) {
-      particles.push({
-        x: Math.random() * canvas.width, y: -10 - Math.random() * 200,
-        w: 6 + Math.random() * 8, h: 3 + Math.random() * 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        vx: (Math.random() - 0.5) * 2.5,
-        vy: 2.5 + Math.random() * 3.5,
-        angle: Math.random() * 360,
-        spin: (Math.random() - 0.5) * 6,
-        life: 1
-      });
-    }
-  }
-
-  function drawConfetti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles = particles.filter(p => p.y < canvas.height + 20 && p.life > 0);
-    particles.forEach(p => {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.angle * Math.PI / 180);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = Math.min(1, p.life);
-      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-      ctx.restore();
-      p.x += p.vx; p.y += p.vy; p.angle += p.spin; p.vy += 0.05;
-      if (p.y > canvas.height * 0.7) p.life -= 0.02;
-    });
-    if (particles.length > 0) animFrame = requestAnimationFrame(drawConfetti);
-    else { canvas.style.opacity = '0'; cancelAnimationFrame(animFrame); }
-  }
-
   // Form submit
   const form = document.getElementById('infoForm');
   const msg  = document.getElementById('message');
@@ -477,9 +401,7 @@
     btn.style.background = '#5b1fa0';
     btn.disabled = true;
     msg.classList.add('visible');
-    canvas.style.opacity = '1';
-    spawnConfetti(); drawConfetti();
-    setTimeout(() => { window.location.href = 'phishing-protection.html'; }, 2200);
+    setTimeout(() => { window.location.href = 'phishing-protection.html'; }, 1500);
   });
 
   // Email validation
