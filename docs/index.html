@@ -1,81 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Welcome</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-  .container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    text-align: center;
-    width: 300px;
-  }
-  input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 6px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  button:hover {
-    background-color: #45a049;
-  }
-  .message {
-    margin-top: 15px;
-    font-weight: bold;
-    color: green;
-  }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PhishAware — Graduate Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #ffffff;
+      --surface:   #f4f1f9;
+      --surface2:  #ede8f5;
+      --purple:    #7b35c1;
+      --purple-lt: #a259e6;
+      --gold:      #b8923a;
+      --white:     #1a1025;
+      --grey-lt:   #4a4555;
+      --grey:      #6b6575;
+      --grey-dk:   #d8d0e8;
+      --border:    #ddd6ee;
+      --text:      #1a1025;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ══ LEFT PANEL ══ */
+    .left-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 3rem;
+      overflow: hidden;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      top: -120px; left: -120px;
+      width: 580px; height: 580px;
+      background: radial-gradient(circle, rgba(123,53,193,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -160px; right: -100px;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(162,89,230,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .diagonal-lines {
+      position: absolute; inset: 0;
+      overflow: hidden; pointer-events: none; opacity: 0.05;
+    }
+    .diagonal-lines::before {
+      content: '';
+      position: absolute; inset: -50%;
+      background-image: repeating-linear-gradient(
+        -45deg, var(--purple) 0px, var(--purple) 1px,
+        transparent 1px, transparent 42px
+      );
+    }
+
+    .bg-cap {
+      position: absolute;
+      bottom: -3rem; right: -3rem;
+      opacity: 0.04; pointer-events: none; z-index: 1;
+    }
+
+    .crest {
+      position: relative; z-index: 2;
+      width: 82px; height: 82px;
+      animation: fadeDown 0.8s ease both;
+    }
+    .crest svg { width: 100%; height: 100%; }
+
+    .panel-middle {
+      position: relative; z-index: 2;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    .panel-year {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--purple-lt);
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .panel-year::before {
+      content: '';
+      display: block; width: 28px; height: 1px;
+      background: var(--purple-lt);
+    }
+
+    .panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.4rem;
+      color: var(--white);
+    }
+    .panel-title .purple { color: var(--purple-lt); }
+
+    .panel-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.8rem;
+      background: linear-gradient(90deg, var(--gold) 25%, #8b5e1a 50%, var(--gold) 75%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    .panel-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--grey-lt);
+      max-width: 360px;
+    }
+
+    .ribbon {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      margin-top: 2rem; padding: 0.5rem 1.1rem;
+      border: 1px solid var(--gold);
+      font-size: 0.65rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .ribbon-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+
+    .stats-strip {
+      display: flex; gap: 2rem;
+      margin-top: 2.2rem; padding-top: 1.8rem;
+      border-top: 1px solid var(--border);
+    }
+    .mini-stat .num {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--purple-lt); line-height: 1;
+    }
+    .mini-stat .lbl {
+      font-size: 0.58rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--grey); margin-top: 0.3rem;
+    }
+
+    .panel-bottom {
+      position: relative; z-index: 2;
+      font-size: 0.6rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--grey);
+      animation: fadeUp 0.9s 0.4s ease both;
+    }
+    .right-panel {
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 3rem 3.5rem;
+      background: #ffffff;
+      animation: fadeUp 0.9s 0.3s ease both;
+      position: relative; overflow: hidden;
+    }
+    .right-panel::before {
+      content: '';
+      position: absolute; bottom: -200px; right: -200px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(123,53,193,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .form-header { margin-bottom: 2.2rem; position: relative; z-index: 1; }
+
+    .form-seal {
+      display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.2rem;
+    }
+    .seal-line { height: 1px; flex: 1; background: linear-gradient(90deg, var(--purple), transparent); }
+    .seal-line.rev { background: linear-gradient(90deg, transparent, var(--purple)); }
+    .seal-badge {
+      font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--purple-lt); border: 1px solid var(--purple); padding: 0.3rem 0.8rem;
+      white-space: nowrap;
+    }
+
+    .form-title {
+      font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 600;
+      color: var(--white); margin-bottom: 0.4rem; letter-spacing: 0.03em;
+    }
+    .form-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 1rem; color: var(--grey); line-height: 1.5;
+    }
+
+    .field-group { margin-bottom: 1.1rem; position: relative; z-index: 1; }
+    .field-label {
+      display: block; font-size: 0.6rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--grey); margin-bottom: 0.45rem;
+    }
+    .field-wrap { position: relative; }
+    .field-icon {
+      position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+      font-size: 0.8rem; pointer-events: none; opacity: 0.35; color: var(--purple-lt);
+    }
+
+    input[type="text"], input[type="email"] {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--white); font-family: 'DM Mono', monospace;
+      font-size: 0.82rem; padding: 0.85rem 1rem 0.85rem 2.5rem;
+      outline: none; transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+      -webkit-appearance: none; border-radius: 0;
+    }
+    input:focus {
+      border-color: var(--purple); background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(123,53,193,0.12), inset 0 0 20px rgba(123,53,193,0.04);
+    }
+    input::placeholder { color: var(--grey); opacity: 0.5; }
+
+    .submit-btn {
+      width: 100%; padding: 1rem; background: var(--purple);
+      color: var(--white); border: none;
+      font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 600;
+      letter-spacing: 0.15em; cursor: pointer; margin-top: 0.4rem;
+      position: relative; overflow: hidden;
+      transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
+      border-radius: 0;
+    }
+    .submit-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .submit-btn:hover {
+      background: var(--purple-lt); transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(123,53,193,0.35);
+    }
+    .submit-btn:active { transform: translateY(0); }
+    .btn-inner { display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+    .btn-arrow { transition: transform 0.3s; }
+    .submit-btn:hover .btn-arrow { transform: translateX(4px); }
+
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.6rem 0; position: relative; z-index: 1;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.8rem; color: var(--grey); white-space: nowrap;
+    }
+
+    .module-list { display: flex; flex-direction: column; gap: 0.6rem; position: relative; z-index: 1; }
+    .module-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.8rem 1rem; border: 1px solid var(--border);
+      background: var(--surface2); transition: border-color 0.3s, background 0.3s;
+    }
+    .module-item:hover { border-color: var(--purple); background: rgba(123,53,193,0.06); }
+    .module-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(123,53,193,0.15); border: 1px solid var(--purple);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0;
+    }
+    .module-text h4 {
+      font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 600;
+      color: var(--white); letter-spacing: 0.04em;
+    }
+    .module-text p {
+      font-size: 0.63rem; color: var(--grey); margin-top: 0.15rem;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+    }
+    .module-status {
+      margin-left: auto; font-size: 0.58rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--purple-lt);
+      border: 1px solid var(--purple); padding: 0.15rem 0.5rem; flex-shrink: 0;
+    }
+
+    .progress-bar { margin-top: 1.6rem; position: relative; z-index: 1; }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.6rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--grey); margin-bottom: 0.5rem;
+    }
+    .progress-label .status { color: var(--purple-lt); }
+    .track { height: 2px; background: var(--border); overflow: hidden; }
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--purple-lt));
+      width: 0%; transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .message {
+      display: none; align-items: center; gap: 0.6rem; margin-top: 0.8rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.95rem; color: var(--purple);
+    }
+    .message.visible { display: flex; }
+    .message::before { content: '✦'; }
+
+    #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: 0; transition: opacity 0.3s; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+
+    @media (max-width: 800px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 2rem 1.5rem; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Welcome!</h2>
-  <p>Please enter your info to continue:</p>
-  <form id="infoForm">
-    <input type="text" name="name" placeholder="Your Name" required>
-    <input type="email" name="email" placeholder="Your Email" required>
-    <button type="submit">Submit</button>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══ LEFT PANEL ══ -->
+<div class="left-panel">
+  <div class="diagonal-lines"></div>
+
+  <div class="bg-cap">
+    <svg width="480" height="480" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="50,10 95,35 50,55 5,35" fill="white"/>
+      <polygon points="50,55 80,41 80,65 50,75 20,65 20,41" fill="white"/>
+      <line x1="80" y1="35" x2="92" y2="38" stroke="white" stroke-width="2"/>
+      <circle cx="92" cy="42" r="4" fill="white"/>
+    </svg>
+  </div>
+
+  <div class="crest">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="38" stroke="#7b35c1" stroke-width="1.5"/>
+      <circle cx="40" cy="40" r="32" stroke="#7b35c1" stroke-width="0.5" stroke-dasharray="3 3"/>
+      <polygon points="40,20 62,31 40,40 18,31" fill="#a259e6"/>
+      <polygon points="40,40 56,33 56,48 40,54 24,48 24,33" fill="#7b35c1"/>
+      <line x1="56" y1="31" x2="64" y2="33" stroke="#d4af6a" stroke-width="1.5"/>
+      <circle cx="64" cy="36" r="2.5" fill="#d4af6a"/>
+      <path id="textCircle" d="M 40,40 m -28,0 a 28,28 0 1,1 56,0 a 28,28 0 1,1 -56,0" fill="none"/>
+      <text font-family="Cinzel, serif" font-size="5.5" fill="#d4af6a" letter-spacing="2">
+        <textPath href="#textCircle" startOffset="8%">PHISHAWARE · GRADUATE PORTAL ·</textPath>
+      </text>
+    </svg>
+  </div>
+
+  <div class="panel-middle">
+    <div class="panel-year">Class of 2025 — Security Excellence</div>
+    <h1 class="panel-title">
+      YOU HAVE<br>
+      <span class="purple">BEEN</span><br>
+      PHISHED!
+    </h1>
+
+  </div>
+
+  <div class="panel-bottom">© 2025 PhishAware — Security Awareness Programme</div>
+</div>
+
+<!-- ══ RIGHT PANEL ══ -->
+<div class="right-panel">
+  <div class="form-header">
+    <div class="form-seal">
+      <div class="seal-line"></div>
+      <div class="seal-badge">🎓 Secure Enrollment</div>
+      <div class="seal-line rev"></div>
+    </div>
+    <h2 class="form-title">Register</h2>
+  </div>
+
+  <form id="infoForm" autocomplete="off">
+    <div class="field-group">
+      <label class="field-label" for="name">Full Name</label>
+      <div class="field-wrap">
+        <span class="field-icon">◈</span>
+        <input type="text" id="name" name="name" placeholder="e.g. Alex Johnson" required/>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="email">Email Address</label>
+      <div class="field-wrap">
+        <span class="field-icon">◉</span>
+        <input type="email" id="email" name="email" placeholder="you@institution.edu" required/>
+      </div>
+    </div>
+    <button type="submit" class="submit-btn">
+      <div class="btn-inner">Register <span class="btn-arrow">→</span></div>
+    </button>
+    <div class="message" id="message">Enrollment confirmed — loading your module...</div>
   </form>
-  <div class="message" id="message"></div>
+
 </div>
 
 <script>
+
+
+  // Confetti
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [], animFrame;
+
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const colors = ['#7b35c1','#a259e6','#d4af6a','#f5f3ef','#c8c4cc','#ffffff','#5b1fa0','#e0d0f5'];
+
+  function spawnConfetti() {
+    for (let i = 0; i < 160; i++) {
+      particles.push({
+        x: Math.random() * canvas.width, y: -10 - Math.random() * 200,
+        w: 6 + Math.random() * 8, h: 3 + Math.random() * 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vx: (Math.random() - 0.5) * 2.5,
+        vy: 2.5 + Math.random() * 3.5,
+        angle: Math.random() * 360,
+        spin: (Math.random() - 0.5) * 6,
+        life: 1
+      });
+    }
+  }
+
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = particles.filter(p => p.y < canvas.height + 20 && p.life > 0);
+    particles.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.min(1, p.life);
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+      p.x += p.vx; p.y += p.vy; p.angle += p.spin; p.vy += 0.05;
+      if (p.y > canvas.height * 0.7) p.life -= 0.02;
+    });
+    if (particles.length > 0) animFrame = requestAnimationFrame(drawConfetti);
+    else { canvas.style.opacity = '0'; cancelAnimationFrame(animFrame); }
+  }
+
+  // Form submit
   const form = document.getElementById('infoForm');
-  const messageDiv = document.getElementById('message');
+  const msg  = document.getElementById('message');
 
   form.addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
+    const btn = form.querySelector('button');
+    btn.querySelector('.btn-inner').innerHTML = 'Registering <span class="btn-arrow">✦</span>';
+    btn.style.background = '#5b1fa0';
+    btn.disabled = true;
+    msg.classList.add('visible');
+    canvas.style.opacity = '1';
+    spawnConfetti(); drawConfetti();
+    setTimeout(() => { window.location.href = 'phishing-protection.html'; }, 2200);
+  });
 
-    // Show confirmation message
-    messageDiv.textContent = "Info submitted! Redirecting...";
-
-    // Redirect to fish page after 1.5 seconds
-    setTimeout(() => {
-      window.location.href = "fish.html";
-    }, 1500);
+  // Email validation
+  document.getElementById('email').addEventListener('input', function() {
+    const valid = this.checkValidity() && this.value.includes('.');
+    if (this.value.length > 3) {
+      this.style.borderColor = valid ? '#a259e6' : '#6b6b6b';
+      this.style.boxShadow = valid ? '0 0 0 3px rgba(162,89,230,0.12)' : 'none';
+    } else {
+      this.style.borderColor = ''; this.style.boxShadow = '';
+    }
   });
 </script>
 
