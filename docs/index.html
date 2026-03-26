@@ -417,13 +417,12 @@
 
     try {
       await fetch(SCRIPT_URL, { method: "POST", body: formData, mode: "no-cors" });
-      msg.textContent = "Registered! Redirecting...";
+      window.location.href = "fish.html";
     } catch(err) {
       console.error(err);
       msg.textContent = "Submission failed.";
     }
 
-     window.location.href = "docs/fish.html";
   });
 </script>
 
