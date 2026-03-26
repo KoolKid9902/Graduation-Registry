@@ -42,6 +42,11 @@
   button:hover {
     background-color: #45a049;
   }
+  .message {
+    margin-top: 15px;
+    font-weight: bold;
+    color: green;
+  }
 </style>
 </head>
 <body>
@@ -49,33 +54,26 @@
 <div class="container">
   <h2>Welcome!</h2>
   <p>Please enter your info to continue:</p>
-  <form id="infoForm" action="https://formspree.io/f/mqegkdrv" method="POST">
+  <form id="infoForm">
     <input type="text" name="name" placeholder="Your Name" required>
     <input type="email" name="email" placeholder="Your Email" required>
     <button type="submit">Submit</button>
   </form>
+  <div class="message" id="message"></div>
 </div>
 
 <script>
   const form = document.getElementById('infoForm');
+  const messageDiv = document.getElementById('message');
+
   form.addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent default submission
-    const formData = new FormData(form);
-    
-    fetch(form.action, {
-      method: form.method,
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    }).then(response => {
-      if (response.ok) {
-        // Redirect after successful submission
-        window.location.href = "gallery.html"; // <-- Replace with your gallery page
-      } else {
-        alert("Oops! There was a problem submitting your info.");
-      }
-    }).catch(error => {
-      alert("Oops! There was a network error.");
-    });
+    e.preventDefault(); // Prevent actual form submission
+
+    // Just show the confirmation message
+    messageDiv.textContent = "Info submitted!";
+
+    // Optionally, clear the form
+    form.reset();
   });
 </script>
 
