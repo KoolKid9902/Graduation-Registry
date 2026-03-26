@@ -434,12 +434,13 @@
 
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbym7YkAcALYUtvCnQAMmwa-qa4jk61OHhbmD9sqS5MX3SIVxloeuZeeQ0bBDrVW-rme/exec", 
+        "https://script.google.com/macros/s/AKfycbxntk7kNMq8x8uNP-QSVbfyi69DtjKgyR_4as1Qw_Hvhjo5ZDodnLDasVjZQ2FAP5c/exec", 
         // ↑ 🔴 PASTE YOUR DEPLOYED APPS SCRIPT URL HERE
         // Example: https://script.google.com/macros/s/AKfycbxxxxxxx/exec
 
         {
           method: "POST",
+          mode: "no-cors"
           body: JSON.stringify(formData),
           headers: {
             "Content-Type": "application/json"
